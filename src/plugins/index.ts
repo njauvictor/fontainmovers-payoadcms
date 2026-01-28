@@ -12,7 +12,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mcpPlugin } from '@payloadcms/plugin-mcp'
-import { s3Storage } from '@payloadcms/storage-s3'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -67,19 +67,14 @@ export const plugins: Plugin[] = [
     },
   }),
 
-  s3Storage({
+  vercelBlobStorage({
+    enabled: true, // Optional, defaults to true
+    // Specify which collections should use Vercel Blob
     collections: {
-      media: true, // Apply storage to 'media' collection
+      media: true,
     },
-    bucket: process.env.S3_BUCKET || '',
-    config: {
-      credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.S3_SECRET || '',
-      },
-      region: 'auto',
-      endpoint: process.env.S3_ENDPOINT || '',
-    },
+    // Token provided by Vercel once Blob storage is added to your Vercel project
+    token: process.env.BLOB_READ_WRITE_TOKEN,
   }),
 
   nestedDocsPlugin({
