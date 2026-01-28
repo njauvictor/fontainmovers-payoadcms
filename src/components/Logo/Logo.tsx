@@ -1,29 +1,32 @@
-import clsx from 'clsx'
+'use client'
+
 import React from 'react'
+import clsx from 'clsx'
+import { motion } from 'motion/react'
 
 interface Props {
   className?: string
-  loading?: 'lazy' | 'eager'
-  priority?: 'auto' | 'high' | 'low'
+  href?: string
 }
 
-export const Logo = (props: Props) => {
-  const { loading: loadingFromProps, priority: priorityFromProps, className } = props
-
-  const loading = loadingFromProps || 'lazy'
-  const priority = priorityFromProps || 'low'
-
+export const Logo: React.FC<Props> = ({ className, href = '/' }) => {
   return (
-    /* eslint-disable @next/next/no-img-element */
-    <img
-      alt="Payload Logo"
-      width={193}
-      height={34}
-      loading={loading}
-      fetchPriority={priority}
-      decoding="async"
-      className={clsx('max-w-[9.375rem] w-full h-[34px]', className)}
-      src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-logo-light.svg"
-    />
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className={clsx('inline-flex flex-col items-start gap-1 select-none mb-2 ', className)}
+      aria-label="Fountain Movers & Transport"
+    >
+      {/* Brand name */}
+      <span className="text-base md:text-xl lg:text-2xl font-bold bg-linear-to-r from-primary via-primary to-primary/80 bg-clip-text ">
+        Fountain Movers &amp; Transport
+      </span>
+
+      {/* Tagline */}
+      <span className="text-[10px] md:text-xs font-semibold text-muted-foreground/80 dark:text-muted-foreground">
+        Professional Moving Services in Nairobi
+      </span>
+    </motion.a>
   )
 }

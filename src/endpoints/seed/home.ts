@@ -511,7 +511,12 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       {
         blockName: 'Media Block',
         blockType: 'mediaBlock',
-        media: metaImage.id,
+        title: 'Featured Media',
+        mediaGallery: [
+          {
+            media: metaImage.id,
+          },
+        ],
       },
       {
         blockName: 'Archive Block',

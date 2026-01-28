@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90',
+        default: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/90',
         destructive: 'bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90',
         outline:
           'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
@@ -18,8 +18,8 @@ const buttonVariants = cva(
       },
       size: {
         clear: '',
-        default: 'h-10 px-4 py-2 has-[>svg]:px-3',
-        sm: 'h-9 rounded-md px-3 has-[>svg]:px-2.5',
+        default: 'h-11 px-6 py-3 has-[>svg]:px-3',
+        sm: 'h-10 rounded-md px-3 has-[>svg]:px-2.5',
         lg: 'h-11 rounded-md px-8 has-[>svg]:px-4',
         icon: 'size-10',
       },
@@ -32,8 +32,7 @@ const buttonVariants = cva(
 )
 
 export interface ButtonProps
-  extends React.ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 

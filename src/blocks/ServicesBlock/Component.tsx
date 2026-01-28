@@ -1,60 +1,62 @@
-import type { Post, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
+import type { Service } from '@/payload-types'
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
 
-import { CollectionArchive } from '@/components/CollectionArchive'
+import { ServicesArchive } from '@/components/ServicesArchive'
 import { cn } from '@/utilities/ui'
 
-export const ArchiveBlock: React.FC<
-  ArchiveBlockProps & {
+// Define the props interface locally since ServicesBlock might not be in payload-types yet
+export interface ServicesBlockProps {
+  id?: string
+  introContent?: any
+  populateBy?: 'collection' | 'selection'
+  relationTo?: 'services'
+  categories?: any[] // Services don't have categories, but keeping for compatibility
+  limit?: number
+  selectedDocs?: Array<{
+    relationTo: 'services'
+    value: number | Service
+  }>
+}
+
+export const ServicesBlock: React.FC<
+  ServicesBlockProps & {
     id?: string
   }
 > = async (props) => {
-  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
+  const { introContent, limit: limitFromProps, populateBy, selectedDocs } = props
 
   const limit = limitFromProps || 3
 
-  let posts: Post[] = []
+  let services: Service[] = []
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
 
-    const flattenedCategories = categories?.map((category) => {
-      if (typeof category === 'object') return category.id
-      else return category
-    })
-
-    const fetchedPosts = await payload.find({
-      collection: 'posts',
+    // Services don't have categories, so we just fetch all services
+    const fetchedServices = await payload.find({
+      collection: 'services',
       depth: 1,
       limit,
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
-              categories: {
-                in: flattenedCategories,
-              },
-            },
-          }
-        : {}),
+      sort: '-publishedAt', // Sort by published date, most recent first
     })
 
-    posts = fetchedPosts.docs
+    services = fetchedServices.docs
   } else {
     if (selectedDocs?.length) {
-      const filteredSelectedPosts = selectedDocs.map((post) => {
-        if (typeof post.value === 'object') return post.value
-      }) as Post[]
+      const filteredSelectedServices = selectedDocs.map((service) => {
+        if (typeof service.value === 'object') return service.value
+      }) as Service[]
 
-      posts = filteredSelectedPosts
+      services = filteredSelectedServices
     }
   }
 
   return (
-    <div className="my-16 lg:my-24">
+    <div className="my-16 lg:my-24 ">
       {introContent && (
         <div className="px-4 sm:px-8 md:px-12 lg:px-16 mb-8">
           <RichText
@@ -72,7 +74,7 @@ export const ArchiveBlock: React.FC<
           />
         </div>
       )}
-      <CollectionArchive posts={posts} />
+      <ServicesArchive services={services} />
     </div>
   )
 }
