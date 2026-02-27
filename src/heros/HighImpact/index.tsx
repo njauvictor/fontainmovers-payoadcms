@@ -153,8 +153,8 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ richText, links, media 
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <p className="font-semibold text-card-foreground text-lg">⭐ 4.9/5 Rating</p>
-              <p className="text-sm text-muted-foreground ">From 200+ verified reviews</p>
+              <p className="font-semibold text-white text-lg">⭐ 4.9/5 Rating</p>
+              <p className="text-sm text-white ">From 200+ verified reviews</p>
             </motion.div>
           </motion.div>
         </div>

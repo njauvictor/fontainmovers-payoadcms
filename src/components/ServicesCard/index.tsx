@@ -5,7 +5,6 @@ import Link from 'next/link'
 import React from 'react'
 
 import type { Service } from '@/payload-types'
-
 import { Media } from '@/components/Media'
 
 export type CardServiceData = Pick<Service, 'slug' | 'heroImage' | 'title' | 'content' | 'meta'>
@@ -19,16 +18,21 @@ export const ServicesCard: React.FC<{
   showDescription?: boolean
 }> = (props) => {
   const { card, link } = useClickableCard({})
-  const { className, doc, relationTo, title: titleFromProps, showDescription = true } = props
+  const {
+    className,
+    doc,
+    relationTo = 'service',
+    title: titleFromProps,
+    showDescription = true,
+  } = props
 
   const { slug, heroImage, title, content, meta } = doc || {}
   const { description: metaDescription } = meta || {}
 
   const titleToUse = titleFromProps || title
-  const sanitizedDescription = metaDescription?.replace(/\s/g, ' ') // replace non-breaking space with white space
+  const sanitizedDescription = metaDescription?.replace(/\s/g, ' ')
   const href = `/${relationTo}/${slug}`
 
-  // Extract a short description from content if no meta description exists
   const getContentExcerpt = () => {
     if (!content?.root?.children) return null
 
@@ -43,47 +47,46 @@ export const ServicesCard: React.FC<{
       .join(' ')
       .trim()
 
-    return textContent.length > 150 ? textContent.substring(0, 150) + '...' : textContent
+    return textContent.length > 140 ? textContent.substring(0, 140) + '...' : textContent
   }
 
   const displayDescription = sanitizedDescription || getContentExcerpt()
 
   return (
     <article
+      ref={card.ref}
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        'group rounded-xl overflow-hidden border border-border bg-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer',
         className,
       )}
-      ref={card.ref}
     >
-      <div className="relative w-full aspect-video">
-        {!heroImage && (
-          <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
-            No image
+      {/* IMAGE CONTAINER - fixed ratio */}
+      <div className="relative w-full h-56 sm:h-60 md:h-64 overflow-hidden bg-muted">
+        {heroImage && typeof heroImage !== 'string' ? (
+          <Media
+            resource={heroImage}
+            size="33vw"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full text-sm text-muted-foreground">
+            No image available
           </div>
-        )}
-        {heroImage && typeof heroImage !== 'string' && (
-          <Media resource={heroImage} size="33vw" className="w-full h-full object-cover" />
         )}
       </div>
-      <div className="p-4">
+
+      {/* CONTENT */}
+      <div className="p-5">
         {titleToUse && (
-          <div className="prose prose-headings:m-0 prose-headings:mb-2">
-            <h3 className="text-lg font-semibold">
-              <Link
-                className="not-prose hover:text-primary transition-colors"
-                href={href}
-                ref={link.ref}
-              >
-                {titleToUse}
-              </Link>
-            </h3>
-          </div>
+          <h3 className="text-lg font-semibold leading-snug">
+            <Link href={href} ref={link.ref} className="hover:text-primary transition-colors">
+              {titleToUse}
+            </Link>
+          </h3>
         )}
+
         {showDescription && displayDescription && (
-          <div className="mt-2 text-base text-muted-foreground line-clamp-4">
-            <p>{displayDescription}</p>
-          </div>
+          <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{displayDescription}</p>
         )}
       </div>
     </article>
